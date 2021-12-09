@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, Text, TextInput, FlatList, Image, TouchableOpacity, Dimensions } from 'react-native';
-import { API_KEY, API_URL } from './config';
+import React, { useState, useRef } from 'react';
+import { StyleSheet, View, Text, TextInput, FlatList, Image, TouchableOpacity, Alert, Dimensions } from 'react-native';
+import { API_KEY } from './config';
 
 const { width, height } = Dimensions.get('screen');
 const IMAGE_SIZE = 80;
@@ -8,15 +8,21 @@ const SPACING = 10;
 
 export default () => {
 
+    const topRef = useRef();
+    const thumbRef = useRef();
+
     const [showSearchTopic, setShowSearchTopic] = useState(true);
-    const [topic, setTopic] = useState();
+    const [topic, setTopic] = useState('');
     const [images, setImages] = useState(null);
+    const [activeIndex, setActiveIndex] = useState(0);
 
     const fetchImagesFromPexels = async () => {
 
-        if (topic.length > 0) {
+        if (topic) {
 
+            setActiveIndex(0);
             setImages(null);
+            setTopic('');
             setShowSearchTopic(false);
 
             const API_URL = `https://api.pexels.com/v1/search?query=${topic}&orentation=portrait&size=small&pen_page=20`;
@@ -32,15 +38,11 @@ export default () => {
             if (photos.length > 0) {
                 setImages(photos);
             } else {
+                Alert.alert('¡Atención!', 'Sin Resultados');
                 setShowSearchTopic(true);
-                alert('Sin Resultados');
             };
         };
     };
-
-    const topRef = useRef();
-    const thumbRef = useRef();
-    const [activeIndex, setActiveIndex] = useState(0);
 
     const scrollToActiveIndex = (index) => {
 
